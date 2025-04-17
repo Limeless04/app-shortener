@@ -4,7 +4,7 @@ import { constants } from 'node:fs/promises';
 import React, {use, useEffect, useState} from 'react';
 
 const Jumbotron = () => {
-    const [mottos, ] = useState<Array<string>>(["Simple", "Fast", "Reliable"]);
+    const [mottos, ] = useState<Array<string>>(["Simple", "Fast", "Reliable", "Secure", "Free"]);	
     const gradients = [
         "from-pink-500 to-yellow-500",
         "from-blue-500 to-green-500",
