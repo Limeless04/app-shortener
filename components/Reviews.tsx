@@ -88,17 +88,17 @@ const FakeReview: React.FC = () => {
   }, []);
 
   return (
-    <div className="lg:fixed md:flex right-8 p-4 max-w-xs rounded-lg text-center text-white bg-gray-900/30 animate-fadeIn z-10 transition-all duration-300 ease-in-out transform md:translate-x-0 md:translate-y-0 md:right-8 md:bottom-8 mobile:relative mobile:w-full mobile:mt-4 mobile:px-4">
-    <p
-      className={`text-lg italic transition-opacity duration-300 ${
-        visible ? "opacity-100" : "opacity-0"
-      }`}
-    >
-      “{reviews[index].quote}”
-      <br />
-      <span className="font-semibold">– {reviews[index].author}</span>
-    </p>
-  </div>
+    <div className="flex flex-col items-center justify-center p-4 max-w-xs rounded-lg text-center text-white bg-gray-900/30 animate-fadeIn z-10 transition-all duration-300 ease-in-out">
+      <p
+        className={`text-lg italic transition-opacity duration-300 ${
+          visible ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        "{reviews[index].quote}"
+        <br />
+        <span className="font-semibold">– {reviews[index].author}</span>
+      </p>
+    </div>
   );
 };
 
