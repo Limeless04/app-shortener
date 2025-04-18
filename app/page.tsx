@@ -202,12 +202,11 @@ export default function Home() {
               />
             )}
           </section>
+          {/* Reviews */}
+          <div className="flex justify-center p-2 max-w-[500px] mx-auto">
+            <Reviews />
+          </div>
         </main>
-
-        {/* Reviews */}
-        <div className="flex justify-center p-5">
-          <Reviews />
-        </div>
       </div>
     </>
   );
