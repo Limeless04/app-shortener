@@ -1,3 +1,10 @@
+v1.0.1
+- fixing issue when running next build because of the routing and params change in next 15
+- change all route handler into server action for more simpler logic
+
+v1.0.0
+- fixing all bug and release version
+
 v0.1.2
 - adding limitation to how much shortening can be don
 - add anonymous user support
