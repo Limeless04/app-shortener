@@ -2,16 +2,15 @@
 import { getSlug } from '@/libs/services/slugService';
 import { decrypt } from '@/libs/utils/encryption';
 import { redirect } from 'next/navigation';
+import { use } from "react";
 
-interface RedirectPageProps {
-  params: {
-    slug: string;
-  };
-}
+type Params = Promise<{ short: string }>;
 
-export default async function RedirectPage({ params }: RedirectPageProps) {
+export default async function RedirectPage(props: { params: Params }) {
   // Fetch data for the given slug
-  const data = await getSlug(params.slug);
+  const params = await props.params;
+  const short = params.short;
+  const data = await getSlug(short);
 
   if (data?.url) {
     // If data exists, redirect to the target URL

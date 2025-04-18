@@ -9,6 +9,8 @@ export function encrypt(text: string): string {
 }
 
 export function decrypt(cipherText: string): string {
-    const bytes = CryptoJs.AES.decrypt(cipherText, secret);
-    return bytes.toString(CryptoJs.enc.Utf8);
+  if (!cipherText) throw new Error('Ciphertext is empty');
+  const bytes = CryptoJs.AES.decrypt(cipherText, secret);
+  const decryptedText = bytes.toString(CryptoJs.enc.Utf8);
+  return decryptedText;
 }

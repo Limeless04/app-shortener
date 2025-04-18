@@ -4,7 +4,7 @@ import { Models } from "appwrite";
 import {generateRandomUsername} from "../utils/useAnonymouseUsername";
 
 // Extend the Appwrite User model to include the 'username' field
-interface UserWithUsername extends Models.User<Models.Preferences> {
+export interface UserWithUsername extends Models.User<Models.Preferences> {
     username: string;
   }
 

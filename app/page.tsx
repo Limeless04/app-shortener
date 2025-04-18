@@ -2,16 +2,14 @@
 import Jumbotron from "../components/Jumbotron";
 import Navbar from "../components/Navbar";
 import Reviews from "../components/Reviews";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Toast from "@/components/Toast";
 import {
   getRandomMessage,
   getRandomTopMessage,
 } from "@/libs/utils/randomMessage";
 import { useAnonymous } from "@/libs/hooks/useAnonymous";
-import { useFetchTodayLimit } from "@/libs/hooks/useFetchTodayLimit";
-import { WRITE_LIMITS } from "./api/shorten/route";
-import { debounce } from "lodash";
+import { shortenUrl, fetchTodayLimit, fetchTotalLimit } from "./action";
 
 export default function Home() {
   // Handle this form submission
@@ -22,9 +20,15 @@ export default function Home() {
   const [showToast, setShowToast] = useState<boolean>(false);
   const [copiedSlug, setCopiedSlug] = useState<string>("");
   const { user, loading } = useAnonymous();
-  const [limit, limitLoading, , refetchLimit] = useFetchTodayLimit(user?.$id);
+
   const randomMessage = getRandomMessage();
   const randomTopMessage = getRandomTopMessage();
+
+  // New state for limit management
+  const [limit, setLimit] = useState<number>(0);
+  const [totalLimit, setTotalLimit] = useState<number>(0);
+  const [limitLoading, setLimitLoading] = useState<boolean>(false);
+  const [limitError, setLimitError] = useState<string>("");
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(slug).then(() => {
@@ -45,38 +49,56 @@ export default function Home() {
     }
 
     try {
-      const res = await fetch("/api/shorten", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ url, userId: user?.$id }),
-      });
+      // Call the server action to shorten the URL
+      const result = await shortenUrl(url, user?.$id);
 
-      const data = await res.json();
-      setSlug(data.shortUrl);
-      if (!res.ok) {
-        setError(data.error || "Unknown error");
-        return;
+      if (result.error) {
+        setError(result.error);
+      } else if (result.shortUrl) {
+        setSlug(result.shortUrl);
+
+        fetchUserLimit(); // Fetch the user's limit after shortening the URL
+      } else {
+        setError("No short URL was returned");
       }
     } catch (error) {
-      setError(error as string);
+      setError(
+        error instanceof Error ? error.message : "Unknown error occurred"
+      );
       console.error("Failed to shorten URL:", error);
     } finally {
       setIsLoading(false);
       setUrl("");
-      refetchLimit(); // Refetch the limit after shortening the URL
     }
   };
 
-  //this debounce is buggy and not working as expected
-  // const debouncedSubmit = useCallback(
-  //   debounce((e: React.FormEvent<HTMLFormElement>) => {
-  //     e.preventDefault();
-  //     handleOnSubmit(e);
-  //   }, 3000),
-  //   []
-  // );
+  // Function to fetch the user's daily limit
+  const fetchUserLimit = useCallback(async () => {
+    if (!user?.$id) return;
+
+    setLimitLoading(true);
+    try {
+      const result = await fetchTodayLimit(user.$id);
+      const resTotalLimit = await fetchTotalLimit();
+      if (result.error) {
+        setLimitError(result.error);
+      } else {
+        setLimit(result.total);
+        setTotalLimit(resTotalLimit);
+      }
+    } catch (error) {
+      setLimitError(
+        error instanceof Error ? error.message : "Failed to fetch limit"
+      );
+    } finally {
+      setLimitLoading(false);
+    }
+  }, [user?.$id]);
+
+  // Fetch limit when user loads or changes
+  useEffect(() => {
+    fetchUserLimit();
+  }, [fetchUserLimit]);
 
   return (
     <>
@@ -108,11 +130,14 @@ export default function Home() {
                   </span>
                 ) : (
                   <span className="font-bold text-white">
-                    {limit}/{WRITE_LIMITS}
+                    {limit}/{totalLimit}
                   </span>
                 )}{" "}
                 {limit === 1 ? "shortening left" : "shortenings left"} today.
               </p>
+              {limitError && (
+                <p className="text-red-400 text-sm mt-1">{limitError}</p>
+              )}
             </div>
           ) : (
             <div className="text-center mb-4 p-4 bg-gray-900/30 border border-gray-600 rounded-lg max-w-[500px] w-full mx-auto animate-pulse">
