@@ -1,0 +1,10 @@
+v0.1.2
+- adding limitation to how much shortening can be don
+- add anonymous user support
+- adding limitation counter
+- can generate anonymouse username
+- adding get limit endpoint
+- fixing some ui element such as error handling, limit counter, username generation, etc.
+
+v0.1.1
+- fixing ui and connect to appwrite Backend
