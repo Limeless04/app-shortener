@@ -1,6 +1,6 @@
 {
   "name": "app-shortener",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -9,8 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/lodash": "^4.17.16",
     "appwrite": "^17.0.1",
     "crypto-js": "^4.2.0",
+    "lodash": "^4.17.21",
     "nanoid": "^5.1.5",
     "next": "15.2.5",
     "react": "^19.0.0",

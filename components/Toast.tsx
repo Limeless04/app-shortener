@@ -1,5 +1,5 @@
 // components/Toast.tsx
-import { useEffect } from "react";
+import { useEffect, memo } from "react";
 
 type ToastProps = {
   message: string;
@@ -7,7 +7,7 @@ type ToastProps = {
   onClose: () => void;
 };
 
-export default function Toast({ message, show, onClose }: ToastProps) {
+const Toast = memo(({ message, show, onClose }: ToastProps) => {
   useEffect(() => {
     if (show) {
       const timer = setTimeout(() => {
@@ -28,4 +28,6 @@ export default function Toast({ message, show, onClose }: ToastProps) {
       </div>
     </div>
   );
-}
+});
+
+export default Toast;

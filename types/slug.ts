@@ -2,6 +2,8 @@
 import type { Models } from 'appwrite';
 
 export interface SlugData {
+  user_id: string;
+  date:string
     slug: string;      // The short unique code
     url: string;       // The full destination URL
     clicks?: number;   // Optional: how many times it's been clicked
