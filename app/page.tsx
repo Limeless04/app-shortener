@@ -205,7 +205,7 @@ export default function Home() {
         </main>
 
         {/* Reviews */}
-        <div className="flex justify-center mt-[48px] p-5">
+        <div className="flex justify-center p-5">
           <Reviews />
         </div>
       </div>
