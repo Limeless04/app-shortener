@@ -1,6 +1,6 @@
 {
-  "name": "app-shortener",
-  "version": "0.1.1",
+  "name": "simple-app-shortener",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
