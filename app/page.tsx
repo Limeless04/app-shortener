@@ -69,13 +69,14 @@ export default function Home() {
     }
   };
 
-  const debouncedSubmit = useCallback(
-    debounce((e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      handleOnSubmit(e);
-    }, 3000),
-    []
-  );
+  //this debounce is buggy and not working as expected
+  // const debouncedSubmit = useCallback(
+  //   debounce((e: React.FormEvent<HTMLFormElement>) => {
+  //     e.preventDefault();
+  //     handleOnSubmit(e);
+  //   }, 3000),
+  //   []
+  // );
 
   return (
     <>
@@ -124,7 +125,7 @@ export default function Home() {
           <section className="flex flex-col gap-6 items-center justify-center w-full p-2">
             <form
               className="flex flex-col gap-6 items-center w-full"
-              onSubmit={debouncedSubmit}
+              onSubmit={handleOnSubmit}
             >
               <input
                 type="text"
