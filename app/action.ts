@@ -5,6 +5,7 @@ import { createSlug } from "@/libs/services/slugService";
 import { nanoid } from "nanoid";
 import { encrypt } from "@/libs/utils/encryption";
 import { SlugData } from "@/types/slug"; // updated path for consistency
+import { headers } from "next/headers";
 
 // Import any required databases, utils, etc.
 // For example, if you're using a database to store shortened URLs
@@ -20,7 +21,7 @@ const LIMITS_COLLECTION_ID = process.env
 const WRITE_LIMITS = 10; // Set your write limits here
 
 export async function fetchTotalLimit(): Promise<number> {
-    return WRITE_LIMITS
+  return WRITE_LIMITS;
 }
 
 export async function shortenUrl(
@@ -76,9 +77,7 @@ function validateUrl(url: string): boolean {
   }
 }
 
-async function checkUserDailyLimit(
-  userId: string
-): Promise<boolean> {
+async function checkUserDailyLimit(userId: string): Promise<boolean> {
   const today = new Date().toISOString().slice(0, 10);
   const limits = await databases.listDocuments(
     DATABASE_ID,
@@ -90,34 +89,35 @@ async function checkUserDailyLimit(
   return limits.total >= WRITE_LIMITS; // Placeholder
 }
 
-
 // In your actions.ts file
-export async function fetchTodayLimit(userId?: string): Promise<{ total: number, error?: string }> {
-    try {
-      if (!userId) {
-        return { total: 0 };
-      }
-      
-      const total = await checkTotalDailyLimitUser(userId);
-      return { total };
-    } catch (error) {
-      console.error("Error fetching today's limit:", error);
-      return { 
-        total: 0,
-        error: error instanceof Error ? error.message : "Failed to fetch limit" 
-      };
+export async function fetchTodayLimit(
+  userId?: string
+): Promise<{ total: number; error?: string }> {
+  try {
+    if (!userId) {
+      return { total: 0 };
     }
+
+    const total = await checkTotalDailyLimitUser(userId);
+    return { total };
+  } catch (error) {
+    console.error("Error fetching today's limit:", error);
+    return {
+      total: 0,
+      error: error instanceof Error ? error.message : "Failed to fetch limit",
+    };
   }
-  
-  async function checkTotalDailyLimitUser(userId: string): Promise<number> {
-    const today = new Date().toISOString().slice(0, 10);
-    const limits = await databases.listDocuments(
-      DATABASE_ID,
-      LIMITS_COLLECTION_ID,
-      [Query.equal("user_id", userId), Query.equal("date", today)]
-    );
-    return limits.total;
-  }
+}
+
+async function checkTotalDailyLimitUser(userId: string): Promise<number> {
+  const today = new Date().toISOString().slice(0, 10);
+  const limits = await databases.listDocuments(
+    DATABASE_ID,
+    LIMITS_COLLECTION_ID,
+    [Query.equal("user_id", userId), Query.equal("date", today)]
+  );
+  return limits.total;
+}
 
 async function generateAndStoreShortUrl(
   url: string,
@@ -131,7 +131,7 @@ async function generateAndStoreShortUrl(
   const today = new Date().toISOString().slice(0, 10);
 
   // This is where you'd implement the core functionality from your API route
-const data: SlugData = {
+  const data: SlugData = {
     slug,
     user_id: userId,
     date: today,
@@ -142,9 +142,20 @@ const data: SlugData = {
   if (!shortId) {
     throw new Error("Failed to create short URL");
   }
-  const fullShortUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/${slug}`;
+  const baseUrl = await getBaseUrl();
+  const fullShortUrl = `${baseUrl}/${slug}`;
 
   return fullShortUrl;
+}
 
-  
+export async function getBaseUrl() {
+  const headersList = headers();
+  const host =
+    (await headersList).get("host") || "localhost:3000" || "dev.local";
+
+  // Determine protocol - use https for production environments
+  // You can customize this logic based on your deployment setup
+  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+
+  return `${protocol}://${host}`;
 }
