@@ -34,5 +34,5 @@ Unlike traditional services, this app **encrypts URLs** before storing them — 
 ### 1. Clone this repo
 
 ```bash
-git clone https://github.com/yourusername/encrypted-url-shortener.git
+git clone git@github.com:Limeless04/app-shortener.git
 cd encrypted-url-shortener
